@@ -11,7 +11,6 @@ import com.androidnetworking.interceptors.HttpLoggingInterceptor
 import com.androidnetworking.interfaces.JSONArrayRequestListener
 import org.json.JSONArray
 import org.json.JSONException
-import org.json.JSONObject
 import testing.belajar.belajarget.R
 
 
@@ -47,10 +46,9 @@ class GETActivity : AppCompatActivity() {
                     Toast.makeText(this@GETActivity, "Berhasil", Toast.LENGTH_LONG).show()
                     try {
                         for (i in 0 until response.length()) {
-                            val test = response.getJSONObject(i).getInt("userId")
-                            val test1 = response.getJSONObject(i).getInt("id")
-                            tvUserId.text = test.toString()
-                            tvId.text = test1.toString()
+                            val test = response.getJSONObject(i)
+                            val test1 = test.getInt("userId")
+                            tvUserId.text = test1.toString()
                         }
                     }
                     catch (e : JSONException) {
