@@ -1,25 +1,28 @@
-package testing.belajar.belajarget.activity
+package testing.belajar.belajarget.activity.activity
 
 import android.os.Bundle
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.androidnetworking.AndroidNetworking
 import com.androidnetworking.common.Priority
 import com.androidnetworking.error.ANError
 import com.androidnetworking.interceptors.HttpLoggingInterceptor
 import com.androidnetworking.interfaces.JSONArrayRequestListener
+import kotlinx.android.synthetic.main.activity_get.*
 import org.json.JSONArray
 import org.json.JSONException
 import testing.belajar.belajarget.R
+import testing.belajar.belajarget.activity.adapter.GETAdapter
 
 
 class GETActivity : AppCompatActivity() {
 
-    private lateinit var tvUserId : TextView
-    private lateinit var tvId : TextView
-    private lateinit var tvTitle : TextView
-    private lateinit var tvBody : TextView
+    var idArray: ArrayList<String> = ArrayList()
+    var userIdArray: ArrayList<String> = ArrayList()
+    var titleArray: ArrayList<String> = ArrayList()
+    var bodyArray: ArrayList<String> =  ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,10 +31,9 @@ class GETActivity : AppCompatActivity() {
         AndroidNetworking.initialize(applicationContext)
         AndroidNetworking.enableLogging(HttpLoggingInterceptor.Level.BODY)
 
-        tvUserId = findViewById(R.id.tvUserId)
-        tvId = findViewById(R.id.tvId)
-        tvTitle = findViewById(R.id.tvTitle)
-        tvBody = findViewById(R.id.tvBody)
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        val linearLayoutManager = LinearLayoutManager(applicationContext)
+        recyclerView.layoutManager = linearLayoutManager
 
         getArray()
     }
@@ -47,13 +49,18 @@ class GETActivity : AppCompatActivity() {
                     try {
                         for (i in 0 until response.length()) {
                             val test = response.getJSONObject(i)
-                            val test1 = test.getInt("userId")
-                            tvUserId.text = test1.toString()
+                            idArray.add(test.getInt("id").toString())
+                            userIdArray.add(test.getInt("userId").toString())
+                            titleArray.add(test.getString("title"))
+                            bodyArray.add(test.getString("body"))
                         }
                     }
                     catch (e : JSONException) {
                         e.printStackTrace()
                     }
+
+                    val getAdapter = GETAdapter(this@GETActivity, idArray, userIdArray, titleArray, bodyArray)
+                    recyclerView.adapter = getAdapter
                 }
 
                 override fun onError(anError: ANError?) {
